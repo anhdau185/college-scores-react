@@ -1,0 +1,8 @@
+/* Colors */
+.sidebar {
+  background-color: #0747a6;
+  padding: 8px;
+}
+.sidebar .sidebar-item:not(:last-child) {
+  margin-bottom: 8px;
+}

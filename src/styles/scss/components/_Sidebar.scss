@@ -1,0 +1,10 @@
+.sidebar {
+    background-color: $cobalt;
+    padding: 8px;
+
+    .sidebar-item {
+        &:not(:last-child) {
+            margin-bottom: 8px;
+        }
+    }
+}
