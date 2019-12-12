@@ -1,13 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Container, Row } from 'react-bootstrap';
-import { connect } from 'react-redux';
+import Header from './Header';
 
 const Home = () => {
-    return;
+    return (
+        <div>
+            <Header />
+        </div>
+    );
 };
 
-const mapStateToProps = state => ({ loggedIn: state.loggedIn });
-const ConnectedHome = connect(mapStateToProps)(Home);
-
-export default ConnectedHome;
+export default Home;
