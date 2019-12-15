@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Home from './Home';
-import { EntranceScore } from './EntranceScore';
+import EntranceScore from './EntranceScore';
 
 const App = () => {
     return (
@@ -9,9 +9,9 @@ const App = () => {
             <Switch>
                 <Route exact path="/" component={Home} />
                 <Route exact path="/home" component={Home} />
-                <Route path="/entrannce_score" component={EntranceScore}/>
+                <Route path="/entrance-score" component={EntranceScore} />
             </Switch>
-        </Router>   
+        </Router>
     );
 }
 
