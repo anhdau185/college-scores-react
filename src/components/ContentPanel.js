@@ -1,9 +1,10 @@
 import React from 'react';
 
-const ContentPanel = () => {
+const ContentPanel = (props) => {
     return (
         <div>
             Here's the content
+            {props.children}
         </div>
     );
 };
