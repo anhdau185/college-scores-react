@@ -1,11 +1,13 @@
 import React from 'react';
+import { Col } from 'react-bootstrap';
 
 const ContentPanel = (props) => {
     return (
-        <div>
-            Here's the content
-            {props.children}
-        </div>
+        <Col md={9} className="p-0">
+            <div className="content-panel">
+                {props.children}
+            </div>
+        </Col>
     );
 };
 

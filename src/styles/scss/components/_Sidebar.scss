@@ -1,10 +1,15 @@
 .sidebar {
-    background-color: $cobalt;
+    height: 100%;
+    background-color: $whiteSmoke;
     padding: 8px;
 
     .sidebar-item {
         &:not(:last-child) {
             margin-bottom: 8px;
         }
+    }
+
+    .card-body {
+        padding: 1rem;
     }
 }

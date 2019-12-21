@@ -1,5 +1,8 @@
 const host = 'http://35.240.228.120:5000';
+const localHost = 'http://localhost:5000';
+
 const basePath = '/api';
+
 const paths = {
     get: {
         college: {
@@ -15,7 +18,7 @@ const paths = {
             byName: '/Major/find/',
             byGroupCode: '/Major/groupCode/'
         },
-        years: '/???'
+        years: '/MajorCollege/years'
     },
     post: {
         college: {
@@ -30,7 +33,7 @@ const paths = {
 };
 
 function getApiPath(path, param) {
-    let apiPath = host + basePath + path;
+    let apiPath = localHost + basePath + path;
     if (param) {
         apiPath += param;
     }
@@ -55,11 +58,13 @@ function getConfig(httpMethod, data) {
 
 async function fetchData(apiPath, config) {
     let response;
+
     if (config) {
         response = await fetch(apiPath, config);
     } else {
         response = await fetch(apiPath);
     }
+
     const data = await response.json();
     return data;
 }
@@ -119,33 +124,39 @@ export default {
         return data;
     },
 
-    getMajorScoresFromCollege: async function (college) {
+    getYears: async function () {
+        const path = getApiPath(paths.get.years);
+        const data = await fetchData(path);
+        return data;
+    },
+
+    getMajorScoresFromCollege: async function (collegeDTO) {
         const path = getApiPath(paths.post.college.majorScores);
-        const config = getConfig('POST', college);
+        const config = getConfig('POST', collegeDTO);
 
         const data = await fetchData(path, config);
         return data;
     },
 
-    getCollegeScoresByMajor: async function (major) {
+    getCollegeScoresByMajor: async function (majorDTO) {
         const path = getApiPath(paths.post.major.collegeScores);
-        const config = getConfig('POST', major);
+        const config = getConfig('POST', majorDTO);
 
         const data = await fetchData(path, config);
         return data;
     },
 
-    compareMajorScoreBetweenColleges: async function (compareObject) {
+    compareMajorScoreBetweenColleges: async function (compareDTO) {
         const path = getApiPath(paths.post.major.compare);
-        const config = getConfig('POST', compareObject);
+        const config = getConfig('POST', compareDTO);
 
         const data = await fetchData(path, config);
         return data;
     },
 
-    predictMajorScore: async function (guessObject) {
+    predictMajorScore: async function (guessDTO) {
         const path = getApiPath(paths.post.predictMajorScore);
-        const config = getConfig('POST', guessObject);
+        const config = getConfig('POST', guessDTO);
 
         const data = await fetchData(path, config);
         return data;

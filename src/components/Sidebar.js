@@ -2,35 +2,23 @@ import React from 'react';
 import { Col, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-const Sidebar = (props) => {
+const Sidebar = ({ children }) => {
     return (
         <Col md={3} className="p-0">
             <div className="sidebar">
-                {props.children}
+                {children}
             </div>
         </Col>
     );
 };
 
-Sidebar.Item = (props) => {
+Sidebar.Item = ({ title, link }) => {
     return (
         <Card className="sidebar-item">
             <Card.Body>
-                {props.title}
-            </Card.Body>
-        </Card>
-    );
-};
-
-Sidebar.Brand = (props) => {
-    return (
-        <Card className="sidebar-brand" style={{ borderRadius: 0 }}>
-            <Card.Body>
-                <div className="logo-container">
-                    <Link to="/home">
-                        <img src={props.logo} alt="acb-logo" />
-                    </Link>
-                </div>
+                <Link to={link}>
+                    {title}
+                </Link>
             </Card.Body>
         </Card>
     );
