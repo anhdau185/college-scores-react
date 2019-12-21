@@ -281,7 +281,7 @@ class EntranceScore extends React.Component {
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-12 p-0">
+                        <div className="col-12">
                             <ScorePanel scores={this.state.scores} />
                         </div>
                     </div>
