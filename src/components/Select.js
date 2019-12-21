@@ -7,7 +7,7 @@ const Select = ({ id, values, disabled, handleSelect }) => {
             id={id}
             defaultValue={values[0]}
             disabled={disabled}
-            onChange={(event) => handleSelect(id, event.target.value)}
+            onChange={event => handleSelect(event.target.value)}
         >
             {values.map((item, index) => <option key={index} value={item}>{item}</option>)}
         </select>
