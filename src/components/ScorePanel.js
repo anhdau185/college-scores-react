@@ -21,8 +21,8 @@ class ScorePanel extends React.Component {
                 <h4>Điểm chuẩn của trường {collegeName} (Mã trường: {collegeCode})</h4>
                 {
                     years.map(
-                        ({ year, majors }) => (
-                            <div className="year-table p-2 mb-2">
+                        ({ year, majors }, index) => (
+                            <div key={index} className="year-table mb-2">
                                 <h6>Năm {year}</h6>
                                 <Table bordered hover>
                                     <thead>
@@ -39,7 +39,7 @@ class ScorePanel extends React.Component {
                                         {
                                             majors.map(
                                                 ({ majorName, majorCode, groupCode, score, info }, index) => (
-                                                    <tr>
+                                                    <tr key={index}>
                                                         <td>{index + 1}</td>
                                                         <td>{majorName}</td>
                                                         <td>{majorCode}</td>
@@ -67,8 +67,8 @@ class ScorePanel extends React.Component {
                 <h4>Điểm chuẩn của ngành/nhóm ngành {majorName} (Mã ngành: {majorCode})</h4>
                 {
                     years.map(
-                        ({ year, colleges }) => (
-                            <div className="year-table p-2 mb-2">
+                        ({ year, colleges }, index) => (
+                            <div key={index} className="year-table mb-2">
                                 <h6>Năm {year}</h6>
                                 <Table bordered hover>
                                     <thead>
@@ -85,7 +85,7 @@ class ScorePanel extends React.Component {
                                         {
                                             colleges.map(
                                                 ({ collegeName, collegeCode, groupCode, score, info }, index) => (
-                                                    <tr>
+                                                    <tr key={index}>
                                                         <td>{index + 1}</td>
                                                         <td>{collegeName}</td>
                                                         <td>{collegeCode}</td>

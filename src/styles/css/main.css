@@ -34,3 +34,8 @@ body {
 .score-panel h6 {
   text-align: center;
 }
+
+#multiline-custom-typeahead .form-control.rbt-input {
+  min-height: 38px;
+  height: 100%;
+}
