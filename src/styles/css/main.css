@@ -11,16 +11,23 @@ body {
 .sidebar {
   min-height: 768px;
   height: 100%;
-  background-color: #dfdfdf;
   padding: 8px;
+  color: #555;
+  background-color: #dfdfdf;
 }
 .sidebar a {
   display: block;
-  color: #212529;
+  color: #555;
 }
 .sidebar a:hover {
   color: #1c63ce;
   text-decoration: none;
+}
+.sidebar .sidebar-item {
+  font-weight: 500;
+}
+.sidebar .sidebar-item .sidebar-subitem {
+  font-weight: 400;
 }
 .sidebar .sidebar-item .sidebar-subitem:not(:last-child) {
   margin-bottom: 0.75rem;

@@ -1,12 +1,13 @@
 .sidebar {
     min-height: 768px;
     height: 100%;
-    background-color: $gainsboro;
     padding: 8px;
+    color: $mortar;
+    background-color: $gainsboro;
 
     a {
         display: block;
-        color: $text;
+        color: $mortar;
 
         &:hover {
             color: $denim;
@@ -15,8 +16,14 @@
     }
 
     .sidebar-item {
-        .sidebar-subitem:not(:last-child) {
-            margin-bottom: 0.75rem;
+        font-weight: 500;
+
+        .sidebar-subitem {
+            font-weight: 400;
+
+            &:not(:last-child) {
+                margin-bottom: 0.75rem;
+            }
         }
     }
 }

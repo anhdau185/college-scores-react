@@ -11,9 +11,9 @@ const Header = () => {
                         <Navbar expand="lg" bg="dark" variant="dark">
                             <Navbar.Brand href="/">Tra cứu điểm chuẩn</Navbar.Brand>
                             <Nav className="ml-auto mr-3">
-                                <Nav.Link href="https://github.com/va-rbb185/college-scores-react" target="_blank">
-                                    GitHub
-                                    <FontAwesome name="external-link" className="pl-1" />
+                                <Nav.Link href="#link">
+                                    Link
+                                    <FontAwesome name="external-link" className="pl-2" />
                                 </Nav.Link>
                             </Nav>
                         </Navbar>

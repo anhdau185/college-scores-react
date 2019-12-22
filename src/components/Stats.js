@@ -90,7 +90,8 @@ export class MajorScoreOverYears extends React.Component {
                     major: true
                 },
                 selectedCollege: null,
-                fetchedMajors: []
+                fetchedMajors: [],
+                selectedMajor: null
             });
         }
     }
@@ -218,37 +219,35 @@ export class MajorScoreOverYears extends React.Component {
                             <div>
                                 <LineGraph
                                     data={this.state.chartData.data}
-                                    options={
-                                        {
-                                            title: {
-                                                display: true,
-                                                text: `Điểm chuẩn ngành ${this.state.chartData.majorName} của trường ${this.state.chartData.collegeName} qua các năm`,
-                                                fontSize: 18
-                                            },
-                                            legend: {
-                                                display: false
-                                            },
-                                            scales: {
-                                                yAxes: [
-                                                    {
-                                                        ticks: {
-                                                            suggestedMin: 0,
-                                                            suggestedMax: 30
-                                                        }
+                                    options={{
+                                        title: {
+                                            display: true,
+                                            text: `Điểm chuẩn ngành ${this.state.chartData.majorName} của trường ${this.state.chartData.collegeName} qua các năm`,
+                                            fontSize: 18
+                                        },
+                                        legend: {
+                                            display: false
+                                        },
+                                        scales: {
+                                            yAxes: [
+                                                {
+                                                    ticks: {
+                                                        suggestedMin: 0,
+                                                        suggestedMax: 30
                                                     }
-                                                ]
-                                            },
-                                            plugins: {
-                                                datalabels: {
-                                                    display: true,
-                                                    color: 'rgba(0, 0, 0, 1)',
-                                                    anchor: 'end',
-                                                    align: '-45',
-                                                    offset: '-2'
                                                 }
+                                            ]
+                                        },
+                                        plugins: {
+                                            datalabels: {
+                                                display: true,
+                                                color: 'rgba(0, 0, 0, 1)',
+                                                anchor: 'end',
+                                                align: '-45',
+                                                offset: '-1'
                                             }
                                         }
-                                    }
+                                    }}
                                 />
                             </div>
                         </div>
@@ -349,7 +348,8 @@ export class CompareScoreBetweenColleges extends React.Component {
                     major: false
                 },
                 selectedMajor: null,
-                fetchedColleges: []
+                fetchedColleges: [],
+                selectedColleges: []
             });
         }
     }
@@ -502,37 +502,35 @@ export class CompareScoreBetweenColleges extends React.Component {
                             <div>
                                 <BarChart
                                     data={this.state.chartData.data}
-                                    options={
-                                        {
-                                            title: {
-                                                display: true,
-                                                text: `Điểm chuẩn ngành ${this.state.chartData.majorName} giữa các trường năm ${this.state.chartData.year}`,
-                                                fontSize: 18
-                                            },
-                                            legend: {
-                                                display: false
-                                            },
-                                            scales: {
-                                                yAxes: [
-                                                    {
-                                                        ticks: {
-                                                            suggestedMin: 0,
-                                                            suggestedMax: 30
-                                                        }
+                                    options={{
+                                        title: {
+                                            display: true,
+                                            text: `Điểm chuẩn ngành ${this.state.chartData.majorName} giữa các trường năm ${this.state.chartData.year}`,
+                                            fontSize: 18
+                                        },
+                                        legend: {
+                                            display: false
+                                        },
+                                        scales: {
+                                            yAxes: [
+                                                {
+                                                    ticks: {
+                                                        suggestedMin: 0,
+                                                        suggestedMax: 30
                                                     }
-                                                ]
-                                            },
-                                            plugins: {
-                                                datalabels: {
-                                                    display: true,
-                                                    color: 'rgba(0, 0, 0, 1)',
-                                                    anchor: 'end',
-                                                    align: 'top',
-                                                    offset: '0'
                                                 }
+                                            ]
+                                        },
+                                        plugins: {
+                                            datalabels: {
+                                                display: true,
+                                                color: 'rgba(0, 0, 0, 1)',
+                                                anchor: 'end',
+                                                align: 'top',
+                                                offset: '0'
                                             }
                                         }
-                                    }
+                                    }}
                                 />
                             </div>
                         </div>

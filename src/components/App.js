@@ -8,7 +8,7 @@ import ContentPanel from './ContentPanel';
 
 import EntranceScore from './EntranceScore';
 import { MajorScoreOverYears, CompareScoreBetweenColleges } from './Stats';
-// import Predict from './Predict';
+import Predict from './Predict';
 
 const App = () => {
     return (
@@ -30,9 +30,9 @@ const App = () => {
                             <ContentPanel>
                                 <Route exact path="/" component={EntranceScore} />
                                 <Route path="/score" component={EntranceScore} />
+                                <Route path="/predict" component={Predict} />
                                 <Route path="/stats/major-score-over-years" component={MajorScoreOverYears} />
                                 <Route path="/stats/compare-score-between-colleges" component={CompareScoreBetweenColleges} />
-                                {/* <Route path="/predict" component={Predict} /> */}
                             </ContentPanel>
                         </Row>
                     </Container>
