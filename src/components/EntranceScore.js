@@ -4,8 +4,6 @@ import CustomTypeahead from './CustomTypeahead';
 import ScorePanel from './ScorePanel';
 import api from '../api';
 
-import { majorScores, collegeScores } from '../sampledata';
-
 class EntranceScore extends React.Component {
     constructor(props) {
         super(props);
@@ -47,8 +45,6 @@ class EntranceScore extends React.Component {
             selectedCollege: null,
             selectedMajor: null,
             selectedYears: [],
-            majorScores: [],
-            collegeScores: [],
             scores: null
         };
     }
@@ -152,28 +148,24 @@ class EntranceScore extends React.Component {
 
         if (selectedYears.length) {
             if (radioChecked.college && selectedCollege) {
-                /* const collegeDTO = {
+                const collegeDTO = {
                     collegeCode: selectedCollege.code,
                     years: selectedYears
                 };
 
                 api.getMajorScoresFromCollege(collegeDTO)
-                    .then(response => this.setState({ majorScores: response.body.majors }, () => console.log(this.state.majorScores)))
-                    .catch(error => console.log(error)); */
-
-                this.setState({ scores: majorScores.body });
+                    .then(response => this.setState({ scores: response.body }, () => console.log(this.state.scores)))
+                    .catch(error => console.log(error));
 
             } else if (radioChecked.major && selectedMajor) {
-                /* const majorDTO = {
+                const majorDTO = {
                     majorCode: selectedMajor.code,
                     years: selectedYears
                 };
 
                 api.getCollegeScoresByMajor(majorDTO)
-                    .then(response => this.setState({ collegeScores: response.body.colleges }, () => console.log(this.state.collegeScores)))
-                    .catch(error => console.log(error)); */
-
-                this.setState({ scores: collegeScores.body });
+                    .then(response => this.setState({ scores: response.body }, () => console.log(this.state.scores)))
+                    .catch(error => console.log(error));
             }
         }
     }
@@ -261,7 +253,6 @@ class EntranceScore extends React.Component {
                                                 options={this.state.fetchedYears.map(item => item.toString())}
                                                 multiple={true}
                                                 handleSelect={this.handleSelectYear}
-                                                handleInputChange={() => { }}
                                                 placeholder="Chọn một hoặc nhiều năm..."
                                             />
                                         </div>

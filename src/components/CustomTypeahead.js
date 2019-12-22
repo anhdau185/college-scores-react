@@ -21,8 +21,16 @@ class CustomTypeahead extends React.Component {
                 placeholder={placeholder}
                 disabled={disabled}
                 multiple={multiple}
-                onChange={selected => this.setState({ selected }, () => handleSelect(this.state.selected))}
-                onInputChange={input => this.setState({ input }, () => handleInputChange(this.state.input))}
+                onChange={selected => this.setState({ selected }, () => {
+                    if (typeof handleSelect === 'function') {
+                        handleSelect(this.state.selected);
+                    }
+                })}
+                onInputChange={input => this.setState({ input }, () => {
+                    if (typeof handleInputChange === 'function') {
+                        handleInputChange(this.state.input);
+                    }
+                })}
             />
         );
     }

@@ -28,7 +28,8 @@ const paths = {
             collegeScores: '/Major',
             compare: '/Major/compare'
         },
-        predictMajorScore: '/Guess'
+        predictMajorScore: '/Guess',
+        majorScoreOverYears: '/MajorCollege/statistic'
     }
 };
 
@@ -157,6 +158,14 @@ export default {
     predictMajorScore: async function (guessDTO) {
         const path = getApiPath(paths.post.predictMajorScore);
         const config = getConfig('POST', guessDTO);
+
+        const data = await fetchData(path, config);
+        return data;
+    },
+
+    getMajorScoreOverYears: async function (majorCollegeDTO) {
+        const path = getApiPath(paths.post.majorScoreOverYears);
+        const config = getConfig('POST', majorCollegeDTO);
 
         const data = await fetchData(path, config);
         return data;

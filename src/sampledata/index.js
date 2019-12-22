@@ -85,20 +85,21 @@ export const collegeScores = {
         colleges: [
             {
                 year: 2018,
-                colleges: [{
-                    collegeCode: "DVT",
-                    collegeName: "Đại học Trà Vinh",
-                    score: 15,
-                    groupCode: "A00, A01, C01, D01",
-                    info: ""
-                },
-                {
-                    collegeCode: "DTC",
-                    collegeName: "Đại học Công Nghệ Thông Tin Và Truyền Thông",
-                    score: 13,
-                    groupCode: "A00, C00, C04, D01",
-                    info: ""
-                }
+                colleges: [
+                    {
+                        collegeCode: "DVT",
+                        collegeName: "Đại học Trà Vinh",
+                        score: 15,
+                        groupCode: "A00, A01, C01, D01",
+                        info: ""
+                    },
+                    {
+                        collegeCode: "DTC",
+                        collegeName: "Đại học Công Nghệ Thông Tin Và Truyền Thông",
+                        score: 13,
+                        groupCode: "A00, C00, C04, D01",
+                        info: ""
+                    }
                 ]
             },
             {
@@ -119,6 +120,37 @@ export const collegeScores = {
                         info: ""
                     }
                 ]
+            }
+        ]
+    }
+};
+
+export const majorScoreOverYears = {
+    took: 5041,
+    message: null,
+    body: {
+        collegeCode: "QSC",
+        collegeName: "Đại học Công Nghệ Thông Tin - đại học Quốc Gia Tphcm",
+        majorCode: "7340122",
+        majorName: "Thương mại điện tử",
+        scores: [
+            {
+                year: 2017,
+                score: 24,
+                groupCode: "A00; A01; D01",
+                info: ""
+            },
+            {
+                year: 2018,
+                score: 21.2,
+                groupCode: "A00; A01; D01",
+                info: ""
+            },
+            {
+                year: 2019,
+                score: 23.9,
+                groupCode: "A00; A01; D01",
+                info: ""
             }
         ]
     }

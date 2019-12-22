@@ -23,7 +23,7 @@ class ScorePanel extends React.Component {
                     years.map(
                         ({ year, majors }) => (
                             <div className="year-table p-2 mb-2">
-                                <h5>Năm {year}</h5>
+                                <h6>Năm {year}</h6>
                                 <Table bordered hover>
                                     <thead>
                                         <tr>
@@ -69,7 +69,7 @@ class ScorePanel extends React.Component {
                     years.map(
                         ({ year, colleges }) => (
                             <div className="year-table p-2 mb-2">
-                                <h5>Năm {year}</h5>
+                                <h6>Năm {year}</h6>
                                 <Table bordered hover>
                                     <thead>
                                         <tr>
