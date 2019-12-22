@@ -139,7 +139,7 @@ export class MajorScoreOverYears extends React.Component {
                         borderColor: 'rgba(0, 0, 0, 1)',
                         borderWidth: 1,
                         data: scores.map(item => item.score),
-                        lineTension: 0.2
+                        lineTension: 0.1
                     }
                 ]
             }
@@ -237,6 +237,15 @@ export class MajorScoreOverYears extends React.Component {
                                                         }
                                                     }
                                                 ]
+                                            },
+                                            plugins: {
+                                                datalabels: {
+                                                    display: true,
+                                                    color: 'rgba(0, 0, 0, 1)',
+                                                    anchor: 'end',
+                                                    align: '-45',
+                                                    offset: '-2'
+                                                }
                                             }
                                         }
                                     }
@@ -512,6 +521,15 @@ export class CompareScoreBetweenColleges extends React.Component {
                                                         }
                                                     }
                                                 ]
+                                            },
+                                            plugins: {
+                                                datalabels: {
+                                                    display: true,
+                                                    color: 'rgba(0, 0, 0, 1)',
+                                                    anchor: 'end',
+                                                    align: 'top',
+                                                    offset: '0'
+                                                }
                                             }
                                         }
                                     }
