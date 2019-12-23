@@ -2,6 +2,7 @@ import React from 'react';
 import Radio from './Radio';
 import CustomTypeahead from './CustomTypeahead';
 import ScorePanel from './ScorePanel';
+import MessageBox from './MessageBox';
 import api from '../api';
 
 class EntranceScore extends React.Component {
@@ -28,6 +29,7 @@ class EntranceScore extends React.Component {
         this.handleCollegeInputChange = this.handleCollegeInputChange.bind(this);
         this.handleMajorInputChange = this.handleMajorInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleMessageBoxClose = this.handleMessageBoxClose.bind(this);
 
         // Initial state for the component
         this.state = {
@@ -45,7 +47,11 @@ class EntranceScore extends React.Component {
             selectedCollege: null,
             selectedMajor: null,
             selectedYears: [],
-            scores: null
+            scores: null,
+            errorMessageBox: {
+                show: false,
+                message: ''
+            }
         };
     }
 
@@ -146,28 +152,65 @@ class EntranceScore extends React.Component {
     handleSubmit() {
         const { radioChecked, selectedCollege, selectedMajor, selectedYears } = this.state;
 
-        if (selectedYears.length) {
-            if (radioChecked.college && selectedCollege) {
-                const collegeDTO = {
-                    collegeCode: selectedCollege.code,
-                    years: selectedYears
-                };
-
-                api.getMajorScoresFromCollege(collegeDTO)
-                    .then(response => this.setState({ scores: response.body }))
-                    .catch(error => console.log(error));
-
-            } else if (radioChecked.major && selectedMajor) {
-                const majorDTO = {
-                    majorCode: selectedMajor.code,
-                    years: selectedYears
-                };
-
-                api.getCollegeScoresByMajor(majorDTO)
-                    .then(response => this.setState({ scores: response.body }))
-                    .catch(error => console.log(error));
-            }
+        if (radioChecked.college && !selectedCollege) {
+            this.setState({
+                errorMessageBox: {
+                    show: true,
+                    message: 'Vui lòng chọn một trường.'
+                }
+            });
+            return;
         }
+
+        if (radioChecked.major && !selectedMajor) {
+            this.setState({
+                errorMessageBox: {
+                    show: true,
+                    message: 'Vui lòng chọn một ngành.'
+                }
+            });
+            return;
+        }
+
+        if (!selectedYears.length) {
+            this.setState({
+                errorMessageBox: {
+                    show: true,
+                    message: 'Vui lòng chọn ít nhất một năm.'
+                }
+            });
+            return;
+        }
+
+        if (radioChecked.college) {
+            const collegeDTO = {
+                collegeCode: selectedCollege.code,
+                years: selectedYears
+            };
+
+            api.getMajorScoresFromCollege(collegeDTO)
+                .then(response => this.setState({ scores: response.body }))
+                .catch(error => console.log(error));
+
+        } else if (radioChecked.major) {
+            const majorDTO = {
+                majorCode: selectedMajor.code,
+                years: selectedYears
+            };
+
+            api.getCollegeScoresByMajor(majorDTO)
+                .then(response => this.setState({ scores: response.body }))
+                .catch(error => console.log(error));
+        }
+    }
+
+    handleMessageBoxClose() {
+        this.setState({
+            errorMessageBox: {
+                show: false,
+                message: ''
+            }
+        });
     }
 
     componentDidMount() {
@@ -282,6 +325,11 @@ class EntranceScore extends React.Component {
                         </div>
                     </div>
                 </div>
+                <MessageBox
+                    show={this.state.errorMessageBox.show}
+                    message={this.state.errorMessageBox.message}
+                    handleClose={this.handleMessageBoxClose}
+                />
             </div>
         );
     }

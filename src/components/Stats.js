@@ -2,6 +2,7 @@ import React from 'react';
 import { LineGraph, BarChart } from './Chart';
 import CustomTypeahead from './CustomTypeahead';
 import Select from './Select';
+import MessageBox from './MessageBox';
 import api from '../api';
 import { currentYear } from '../values';
 
@@ -21,6 +22,7 @@ export class MajorScoreOverYears extends React.Component {
         this.handleSelectCollege = this.handleSelectCollege.bind(this);
         this.handleSelectMajor = this.handleSelectMajor.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleMessageBoxClose = this.handleMessageBoxClose.bind(this);
 
         // Initial state for the component
         this.state = {
@@ -36,6 +38,10 @@ export class MajorScoreOverYears extends React.Component {
                 collegeName: '',
                 majorName: '',
                 data: null
+            },
+            errorMessageBox: {
+                show: false,
+                message: ''
             }
         };
     }
@@ -135,19 +141,48 @@ export class MajorScoreOverYears extends React.Component {
 
     handleSubmit() {
         const { selectedCollege, selectedMajor } = this.state;
-        if (selectedCollege && selectedMajor) {
-            const majorCollegeDTO = {
-                collegeId: selectedCollege.code,
-                majorId: selectedMajor.code
-            };
 
-            api.getMajorScoreOverYears(majorCollegeDTO)
-                .then(response => {
-                    const chartData = this.processData(response);
-                    this.setState({ chartData });
-                })
-                .catch(error => console.log(error));
+        if (!selectedCollege) {
+            this.setState({
+                errorMessageBox: {
+                    show: true,
+                    message: 'Vui lòng chọn một trường.'
+                }
+            });
+            return;
         }
+
+        if (!selectedMajor) {
+            this.setState({
+                errorMessageBox: {
+                    show: true,
+                    message: 'Vui lòng chọn một ngành của trường đã chọn.'
+                }
+            });
+            return;
+        }
+
+        const majorCollegeDTO = {
+            collegeId: selectedCollege.code,
+            majorId: selectedMajor.code
+        };
+
+        api.getMajorScoreOverYears(majorCollegeDTO)
+            .then(response => {
+                const chartData = this.processData(response);
+                this.setState({ chartData });
+            })
+            .catch(error => console.log(error));
+
+    }
+
+    handleMessageBoxClose() {
+        this.setState({
+            errorMessageBox: {
+                show: false,
+                message: ''
+            }
+        });
     }
 
     componentDidMount() {
@@ -254,6 +289,11 @@ export class MajorScoreOverYears extends React.Component {
                         </div>
                     </div>
                 </div>
+                <MessageBox
+                    show={this.state.errorMessageBox.show}
+                    message={this.state.errorMessageBox.message}
+                    handleClose={this.handleMessageBoxClose}
+                />
             </div>
         );
     }
@@ -277,6 +317,7 @@ export class CompareScoreBetweenColleges extends React.Component {
         this.handleSelectCollege = this.handleSelectCollege.bind(this);
         this.handleSelectYear = this.handleSelectYear.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleMessageBoxClose = this.handleMessageBoxClose.bind(this);
 
         // Initial state for the component
         this.state = {
@@ -294,6 +335,10 @@ export class CompareScoreBetweenColleges extends React.Component {
                 majorName: '',
                 year: '',
                 data: null
+            },
+            errorMessageBox: {
+                show: false,
+                message: ''
             }
         };
     }
@@ -397,20 +442,58 @@ export class CompareScoreBetweenColleges extends React.Component {
 
     handleSubmit() {
         const { selectedMajor, selectedColleges, selectedYear } = this.state;
-        if (selectedMajor && selectedColleges.length >= 2 && selectedYear) {
-            const compareDTO = {
-                majorCode: selectedMajor.code,
-                collegeCodes: selectedColleges.map(item => item.code),
-                year: selectedYear
-            };
 
-            api.compareMajorScoreBetweenColleges(compareDTO)
-                .then(response => {
-                    const chartData = this.processData(response);
-                    this.setState({ chartData });
-                })
-                .catch(error => console.log(error));
+        if (!selectedMajor) {
+            this.setState({
+                errorMessageBox: {
+                    show: true,
+                    message: 'Vui lòng chọn một ngành.'
+                }
+            });
+            return;
         }
+
+        if (selectedColleges.length < 2) {
+            this.setState({
+                errorMessageBox: {
+                    show: true,
+                    message: 'Vui lòng chọn ít nhất hai trường có đào tạo ngành đã chọn.'
+                }
+            });
+            return;
+        }
+
+        if (!selectedYear) {
+            this.setState({
+                errorMessageBox: {
+                    show: true,
+                    message: 'Vui lòng chọn một năm.'
+                }
+            });
+            return;
+        }
+
+        const compareDTO = {
+            majorCode: selectedMajor.code,
+            collegeCodes: selectedColleges.map(item => item.code),
+            year: selectedYear
+        };
+
+        api.compareMajorScoreBetweenColleges(compareDTO)
+            .then(response => {
+                const chartData = this.processData(response);
+                this.setState({ chartData });
+            })
+            .catch(error => console.log(error));
+    }
+
+    handleMessageBoxClose() {
+        this.setState({
+            errorMessageBox: {
+                show: false,
+                message: ''
+            }
+        });
     }
 
     componentDidMount() {
@@ -537,6 +620,11 @@ export class CompareScoreBetweenColleges extends React.Component {
                         </div>
                     </div>
                 </div>
+                <MessageBox
+                    show={this.state.errorMessageBox.show}
+                    message={this.state.errorMessageBox.message}
+                    handleClose={this.handleMessageBoxClose}
+                />
             </div>
         );
     }

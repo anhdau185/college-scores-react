@@ -7,6 +7,10 @@ body {
 body {
   overflow-y: scroll !important;
 }
+body.modal-open {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}
 
 .sidebar {
   min-height: 768px;

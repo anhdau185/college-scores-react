@@ -1,15 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
-const MessageBox = () => {
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
+const MessageBox = ({ show, message, handleClose }) => {
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Body>
-                Dữ liệu đầu vào chưa đủ hoặc không hợp lệ
+                {message}
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>Close</Button>
@@ -17,3 +13,5 @@ const MessageBox = () => {
         </Modal>
     );
 };
+
+export default MessageBox;

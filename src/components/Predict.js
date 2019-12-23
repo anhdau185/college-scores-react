@@ -1,5 +1,6 @@
 import React from 'react';
 import CustomTypeahead from './CustomTypeahead';
+import MessageBox from './MessageBox';
 import api from '../api';
 import { currentYear, futureYears } from '../values';
 
@@ -21,6 +22,7 @@ class Predict extends React.Component {
         this.handleSelectMajor = this.handleSelectMajor.bind(this);
         this.handleSelectYear = this.handleSelectYear.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleMessageBoxClose = this.handleMessageBoxClose.bind(this);
 
         // Initial state for the component
         this.state = {
@@ -34,7 +36,11 @@ class Predict extends React.Component {
             selectedCollege: null,
             selectedMajor: null,
             selectedYears: [],
-            prediction: []
+            prediction: [],
+            errorMessageBox: {
+                show: false,
+                message: ''
+            }
         };
     }
 
@@ -121,20 +127,58 @@ class Predict extends React.Component {
 
     handleSubmit() {
         const { selectedCollege, selectedMajor, selectedYears } = this.state;
-        if (selectedCollege && selectedMajor && selectedYears.length) {
-            const guessDTO = {
-                collegeCode: selectedCollege.code,
-                majorCode: selectedMajor.code,
-                years: selectedYears
-            };
 
-            api.predictMajorScore(guessDTO)
-                .then(response => {
-                    const prediction = this.processData(response);
-                    this.setState({ prediction });
-                })
-                .catch(error => console.log(error));
+        if (!selectedCollege) {
+            this.setState({
+                errorMessageBox: {
+                    show: true,
+                    message: 'Vui lòng chọn một trường.'
+                }
+            });
+            return;
         }
+
+        if (!selectedMajor) {
+            this.setState({
+                errorMessageBox: {
+                    show: true,
+                    message: 'Vui lòng chọn một ngành của trường đã chọn.'
+                }
+            });
+            return;
+        }
+
+        if (!selectedYears.length) {
+            this.setState({
+                errorMessageBox: {
+                    show: true,
+                    message: 'Vui lòng chọn ít nhất một năm.'
+                }
+            });
+            return;
+        }
+
+        const guessDTO = {
+            collegeCode: selectedCollege.code,
+            majorCode: selectedMajor.code,
+            years: selectedYears
+        };
+
+        api.predictMajorScore(guessDTO)
+            .then(response => {
+                const prediction = this.processData(response);
+                this.setState({ prediction });
+            })
+            .catch(error => console.log(error));
+    }
+
+    handleMessageBoxClose() {
+        this.setState({
+            errorMessageBox: {
+                show: false,
+                message: ''
+            }
+        });
     }
 
     componentDidMount() {
@@ -217,6 +261,11 @@ class Predict extends React.Component {
                         </div>
                     </div>
                 </div>
+                <MessageBox
+                    show={this.state.errorMessageBox.show}
+                    message={this.state.errorMessageBox.message}
+                    handleClose={this.handleMessageBoxClose}
+                />
             </div>
         );
     }
