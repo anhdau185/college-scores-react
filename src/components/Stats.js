@@ -3,6 +3,7 @@ import { LineGraph, BarChart } from './Chart';
 import CustomTypeahead from './CustomTypeahead';
 import Select from './Select';
 import api from '../api';
+import { currentYear } from '../values';
 
 export class MajorScoreOverYears extends React.Component {
     constructor(props) {
@@ -87,7 +88,7 @@ export class MajorScoreOverYears extends React.Component {
             //fetch latest majors of the selected college
             api.getMajorScoresFromCollege({
                 collegeCode: selectedCollege.code,
-                years: [2019]
+                years: [currentYear]
             })
                 .then(response => {
                     const fetchedMajors = response.body.majors[0].majors.map(
@@ -344,7 +345,7 @@ export class CompareScoreBetweenColleges extends React.Component {
             //fetch colleges that have the selected major
             api.getCollegeScoresByMajor({
                 majorCode: selectedMajor.code,
-                years: [2019]
+                years: [currentYear]
             })
                 .then(response => {
                     const fetchedColleges = response.body.colleges[0].colleges.map(

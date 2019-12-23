@@ -1,6 +1,7 @@
 import React from 'react';
 import CustomTypeahead from './CustomTypeahead';
 import api from '../api';
+import { currentYear, futureYears } from '../values';
 
 class Predict extends React.Component {
     constructor(props) {
@@ -29,7 +30,7 @@ class Predict extends React.Component {
             },
             fetchedColleges: [],
             fetchedMajors: [],
-            fetchedYears: [2020, 2021, 2022, 2023, 2024, 2025],
+            fetchedYears: futureYears,
             selectedCollege: null,
             selectedMajor: null,
             selectedYears: [],
@@ -69,7 +70,7 @@ class Predict extends React.Component {
             //fetch latest majors of the selected college
             api.getMajorScoresFromCollege({
                 collegeCode: selectedCollege.code,
-                years: [2019]
+                years: [currentYear]
             })
                 .then(response => {
                     const fetchedMajors = response.body.majors[0].majors.map(
