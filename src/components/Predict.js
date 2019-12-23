@@ -37,6 +37,11 @@ class Predict extends React.Component {
         };
     }
 
+    processData(raw) {
+        console.log(raw.body);
+        return raw.body;
+    }
+
     handleCollegeInputChange(input) {
         clearTimeout(this.inputChangeTimer);
         this.inputChangeTimer = setTimeout(
@@ -123,13 +128,12 @@ class Predict extends React.Component {
             };
 
             api.predictMajorScore(guessDTO)
-                .then(response => this.processData(response))
+                .then(response => {
+                    const prediction = this.processData(response);
+                    this.setState({ prediction });
+                })
                 .catch(error => console.log(error));
         }
-    }
-
-    processData(raw) {
-        console.log(raw.body);
     }
 
     componentDidMount() {

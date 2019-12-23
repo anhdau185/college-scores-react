@@ -39,6 +39,27 @@ export class MajorScoreOverYears extends React.Component {
         };
     }
 
+    processData(raw) {
+        const { collegeName, majorName, scores } = raw.body;
+        return {
+            collegeName,
+            majorName,
+            data: {
+                labels: scores.map(item => item.year),
+                datasets: [
+                    {
+                        label: 'Điểm chuẩn',
+                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                        borderColor: 'rgba(0, 0, 0, 1)',
+                        borderWidth: 1,
+                        data: scores.map(item => item.score),
+                        lineTension: 0.1
+                    }
+                ]
+            }
+        };
+    }
+
     handleCollegeInputChange(input) {
         clearTimeout(this.inputChangeTimer);
         this.inputChangeTimer = setTimeout(
@@ -120,33 +141,12 @@ export class MajorScoreOverYears extends React.Component {
             };
 
             api.getMajorScoreOverYears(majorCollegeDTO)
-                .then(response => this.processData(response))
+                .then(response => {
+                    const chartData = this.processData(response);
+                    this.setState({ chartData });
+                })
                 .catch(error => console.log(error));
         }
-    }
-
-    processData(raw) {
-        const { collegeName, majorName, scores } = raw.body;
-
-        const chartData = {
-            collegeName,
-            majorName,
-            data: {
-                labels: scores.map(item => item.year),
-                datasets: [
-                    {
-                        label: 'Điểm chuẩn',
-                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                        borderColor: 'rgba(0, 0, 0, 1)',
-                        borderWidth: 1,
-                        data: scores.map(item => item.score),
-                        lineTension: 0.1
-                    }
-                ]
-            }
-        };
-
-        this.setState({ chartData });
     }
 
     componentDidMount() {
@@ -297,6 +297,26 @@ export class CompareScoreBetweenColleges extends React.Component {
         };
     }
 
+    processData(raw) {
+        const { majorName, year, colleges: scores } = raw.body;
+        return {
+            majorName,
+            year,
+            data: {
+                labels: scores.map(item => item.collegeName),
+                datasets: [
+                    {
+                        label: 'Điểm chuẩn',
+                        backgroundColor: 'rgba(75, 192, 192, 1)',
+                        borderColor: 'rgba(0, 0, 0, 1)',
+                        borderWidth: 1,
+                        data: scores.map(item => item.score)
+                    }
+                ]
+            }
+        };
+    }
+
     handleMajorInputChange(input) {
         clearTimeout(this.inputChangeTimer);
         this.inputChangeTimer = setTimeout(
@@ -384,32 +404,12 @@ export class CompareScoreBetweenColleges extends React.Component {
             };
 
             api.compareMajorScoreBetweenColleges(compareDTO)
-                .then(response => this.processData(response))
+                .then(response => {
+                    const chartData = this.processData(response);
+                    this.setState({ chartData });
+                })
                 .catch(error => console.log(error));
         }
-    }
-
-    processData(raw) {
-        const { majorName, year, colleges: scores } = raw.body;
-
-        const chartData = {
-            majorName,
-            year,
-            data: {
-                labels: scores.map(item => item.collegeName),
-                datasets: [
-                    {
-                        label: 'Điểm chuẩn',
-                        backgroundColor: 'rgba(75, 192, 192, 1)',
-                        borderColor: 'rgba(0, 0, 0, 1)',
-                        borderWidth: 1,
-                        data: scores.map(item => item.score)
-                    }
-                ]
-            }
-        };
-
-        this.setState({ chartData });
     }
 
     componentDidMount() {
