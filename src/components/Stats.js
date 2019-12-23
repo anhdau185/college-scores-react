@@ -4,7 +4,7 @@ import CustomTypeahead from './CustomTypeahead';
 import Select from './Select';
 import MessageBox from './MessageBox';
 import api from '../api';
-import { currentYear } from '../values';
+import { CURRENT_YEAR, MAX_FETCH_ITEMS } from '../values';
 import { isArrayTruthy } from '../helpers';
 
 export class MajorScoreOverYears extends React.Component {
@@ -68,6 +68,12 @@ export class MajorScoreOverYears extends React.Component {
         };
     }
 
+    toggleMessageBox(show, message) {
+        this.setState({
+            errorMessageBox: { show, message }
+        });
+    }
+
     handleCollegeInputChange(input) {
         clearTimeout(this.inputChangeTimer);
         this.inputChangeTimer = setTimeout(
@@ -75,7 +81,7 @@ export class MajorScoreOverYears extends React.Component {
                 if (input.length >= 3) {
                     api.findCollegesByName(input)
                         .then(response => {
-                            const fetchedColleges = response.body.slice(0, 15);
+                            const fetchedColleges = response.body.slice(0, MAX_FETCH_ITEMS);
                             this.setState({ fetchedColleges });
                         })
                         .catch(error => console.log(error));
@@ -95,7 +101,7 @@ export class MajorScoreOverYears extends React.Component {
             //fetch latest majors of the selected college
             api.getMajorScoresFromCollege({
                 collegeCode: selectedCollege.code,
-                years: [currentYear]
+                years: [CURRENT_YEAR]
             })
                 .then(response => {
                     const fetchedMajors = response.body.majors[0].majors.map(
@@ -144,22 +150,12 @@ export class MajorScoreOverYears extends React.Component {
         const { selectedCollege, selectedMajor } = this.state;
 
         if (!selectedCollege) {
-            this.setState({
-                errorMessageBox: {
-                    show: true,
-                    message: 'Vui lòng chọn một trường.'
-                }
-            });
+            this.toggleMessageBox(true, 'Vui lòng chọn một trường.');
             return;
         }
 
         if (!selectedMajor) {
-            this.setState({
-                errorMessageBox: {
-                    show: true,
-                    message: 'Vui lòng chọn một ngành của trường đã chọn.'
-                }
-            });
+            this.toggleMessageBox(true, 'Vui lòng chọn một ngành của trường đã chọn.');
             return;
         }
 
@@ -178,18 +174,13 @@ export class MajorScoreOverYears extends React.Component {
     }
 
     handleMessageBoxClose() {
-        this.setState({
-            errorMessageBox: {
-                show: false,
-                message: ''
-            }
-        });
+        this.toggleMessageBox(false, '');
     }
 
     componentDidMount() {
         api.getAllColleges()
             .then(response => {
-                const fetchedColleges = response.body.slice(0, 10);
+                const fetchedColleges = response.body.slice(0, MAX_FETCH_ITEMS);
                 this.setState({ fetchedColleges });
             })
             .catch(error => console.log(error));
@@ -364,6 +355,12 @@ export class CompareScoreBetweenColleges extends React.Component {
         };
     }
 
+    toggleMessageBox(show, message) {
+        this.setState({
+            errorMessageBox: { show, message }
+        });
+    }
+
     handleMajorInputChange(input) {
         clearTimeout(this.inputChangeTimer);
         this.inputChangeTimer = setTimeout(
@@ -371,7 +368,7 @@ export class CompareScoreBetweenColleges extends React.Component {
                 if (input.length >= 3) {
                     api.findMajorsByName(input)
                         .then(response => {
-                            const fetchedMajors = response.body.slice(0, 15);
+                            const fetchedMajors = response.body.slice(0, MAX_FETCH_ITEMS);
                             this.setState({ fetchedMajors });
                         })
                         .catch(error => console.log(error));
@@ -391,7 +388,7 @@ export class CompareScoreBetweenColleges extends React.Component {
             //fetch colleges that have the selected major
             api.getCollegeScoresByMajor({
                 majorCode: selectedMajor.code,
-                years: [currentYear]
+                years: [CURRENT_YEAR]
             })
                 .then(response => {
                     const fetchedColleges = response.body.colleges[0].colleges.map(
@@ -446,32 +443,20 @@ export class CompareScoreBetweenColleges extends React.Component {
         const { selectedMajor, selectedColleges, selectedYear } = this.state;
 
         if (!selectedMajor) {
-            this.setState({
-                errorMessageBox: {
-                    show: true,
-                    message: 'Vui lòng chọn một ngành.'
-                }
-            });
+            this.toggleMessageBox(true, 'Vui lòng chọn một ngành.');
             return;
         }
 
         if (selectedColleges.length < 2) {
-            this.setState({
-                errorMessageBox: {
-                    show: true,
-                    message: 'Vui lòng chọn ít nhất hai trường có đào tạo ngành đã chọn và loại bỏ những trường không đào tạo ngành này (nếu có).'
-                }
-            });
+            this.toggleMessageBox(
+                true,
+                'Vui lòng chọn ít nhất hai trường có đào tạo ngành đã chọn và loại bỏ những trường không đào tạo ngành này (nếu có).'
+            );
             return;
         }
 
         if (!selectedYear) {
-            this.setState({
-                errorMessageBox: {
-                    show: true,
-                    message: 'Vui lòng chọn một năm.'
-                }
-            });
+            this.toggleMessageBox(true, 'Vui lòng chọn một năm.');
             return;
         }
 
@@ -490,18 +475,13 @@ export class CompareScoreBetweenColleges extends React.Component {
     }
 
     handleMessageBoxClose() {
-        this.setState({
-            errorMessageBox: {
-                show: false,
-                message: ''
-            }
-        });
+        this.toggleMessageBox(false, '');
     }
 
     componentDidMount() {
         api.getAllMajors()
             .then(response => {
-                const fetchedMajors = response.body.slice(0, 10);
+                const fetchedMajors = response.body.slice(0, MAX_FETCH_ITEMS);
                 this.setState({ fetchedMajors });
             })
             .catch(error => console.log(error));

@@ -4,6 +4,7 @@ import CustomTypeahead from './CustomTypeahead';
 import ScorePanel from './ScorePanel';
 import MessageBox from './MessageBox';
 import api from '../api';
+import { MAX_FETCH_ITEMS } from '../values';
 
 class EntranceScore extends React.Component {
     constructor(props) {
@@ -53,6 +54,12 @@ class EntranceScore extends React.Component {
                 message: ''
             }
         };
+    }
+
+    toggleMessageBox(show, message) {
+        this.setState({
+            errorMessageBox: { show, message }
+        });
     }
 
     handleRadioCollegeClick() {
@@ -122,7 +129,7 @@ class EntranceScore extends React.Component {
                 if (input.length >= 3) {
                     api.findCollegesByName(input)
                         .then(response => {
-                            const fetchedColleges = response.body.slice(0, 15);
+                            const fetchedColleges = response.body.slice(0, MAX_FETCH_ITEMS);
                             this.setState({ fetchedColleges });
                         })
                         .catch(error => console.log(error));
@@ -139,7 +146,7 @@ class EntranceScore extends React.Component {
                 if (input.length >= 3) {
                     api.findMajorsByName(input)
                         .then(response => {
-                            const fetchedMajors = response.body.slice(0, 15);
+                            const fetchedMajors = response.body.slice(0, MAX_FETCH_ITEMS);
                             this.setState({ fetchedMajors });
                         })
                         .catch(error => console.log(error));
@@ -153,32 +160,17 @@ class EntranceScore extends React.Component {
         const { radioChecked, selectedCollege, selectedMajor, selectedYears } = this.state;
 
         if (radioChecked.college && !selectedCollege) {
-            this.setState({
-                errorMessageBox: {
-                    show: true,
-                    message: 'Vui lòng chọn một trường.'
-                }
-            });
+            this.toggleMessageBox(true, 'Vui lòng chọn một trường.');
             return;
         }
 
         if (radioChecked.major && !selectedMajor) {
-            this.setState({
-                errorMessageBox: {
-                    show: true,
-                    message: 'Vui lòng chọn một ngành.'
-                }
-            });
+            this.toggleMessageBox(true, 'Vui lòng chọn một ngành.');
             return;
         }
 
         if (!selectedYears.length) {
-            this.setState({
-                errorMessageBox: {
-                    show: true,
-                    message: 'Vui lòng chọn ít nhất một năm.'
-                }
-            });
+            this.toggleMessageBox(true, 'Vui lòng chọn ít nhất một năm.');
             return;
         }
 
@@ -205,25 +197,20 @@ class EntranceScore extends React.Component {
     }
 
     handleMessageBoxClose() {
-        this.setState({
-            errorMessageBox: {
-                show: false,
-                message: ''
-            }
-        });
+        this.toggleMessageBox(false, '');
     }
 
     componentDidMount() {
         api.getAllColleges()
             .then(response => {
-                const fetchedColleges = response.body.slice(0, 10);
+                const fetchedColleges = response.body.slice(0, MAX_FETCH_ITEMS);
                 this.setState({ fetchedColleges });
             })
             .catch(error => console.log(error));
 
         api.getAllMajors()
             .then(response => {
-                const fetchedMajors = response.body.slice(0, 10);
+                const fetchedMajors = response.body.slice(0, MAX_FETCH_ITEMS);
                 this.setState({ fetchedMajors });
             })
             .catch(error => console.log(error));

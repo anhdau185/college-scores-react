@@ -2,7 +2,7 @@ import React from 'react';
 import CustomTypeahead from './CustomTypeahead';
 import MessageBox from './MessageBox';
 import api from '../api';
-import { currentYear, futureYears } from '../values';
+import { CURRENT_YEAR, FUTURE_YEARS, MAX_FETCH_ITEMS } from '../values';
 
 class Predict extends React.Component {
     constructor(props) {
@@ -32,7 +32,7 @@ class Predict extends React.Component {
             },
             fetchedColleges: [],
             fetchedMajors: [],
-            fetchedYears: futureYears,
+            fetchedYears: FUTURE_YEARS,
             selectedCollege: null,
             selectedMajor: null,
             selectedYears: [],
@@ -49,6 +49,12 @@ class Predict extends React.Component {
         return raw.body;
     }
 
+    toggleMessageBox(show, message) {
+        this.setState({
+            errorMessageBox: { show, message }
+        });
+    }
+
     handleCollegeInputChange(input) {
         clearTimeout(this.inputChangeTimer);
         this.inputChangeTimer = setTimeout(
@@ -56,7 +62,7 @@ class Predict extends React.Component {
                 if (input.length >= 3) {
                     api.findCollegesByName(input)
                         .then(response => {
-                            const fetchedColleges = response.body.slice(0, 15);
+                            const fetchedColleges = response.body.slice(0, MAX_FETCH_ITEMS);
                             this.setState({ fetchedColleges });
                         })
                         .catch(error => console.log(error));
@@ -76,7 +82,7 @@ class Predict extends React.Component {
             //fetch latest majors of the selected college
             api.getMajorScoresFromCollege({
                 collegeCode: selectedCollege.code,
-                years: [currentYear]
+                years: [CURRENT_YEAR]
             })
                 .then(response => {
                     const fetchedMajors = response.body.majors[0].majors.map(
@@ -129,32 +135,17 @@ class Predict extends React.Component {
         const { selectedCollege, selectedMajor, selectedYears } = this.state;
 
         if (!selectedCollege) {
-            this.setState({
-                errorMessageBox: {
-                    show: true,
-                    message: 'Vui lòng chọn một trường.'
-                }
-            });
+            this.toggleMessageBox(true, 'Vui lòng chọn một trường.');
             return;
         }
 
         if (!selectedMajor) {
-            this.setState({
-                errorMessageBox: {
-                    show: true,
-                    message: 'Vui lòng chọn một ngành của trường đã chọn.'
-                }
-            });
+            this.toggleMessageBox(true, 'Vui lòng chọn một ngành của trường đã chọn.');
             return;
         }
 
         if (!selectedYears.length) {
-            this.setState({
-                errorMessageBox: {
-                    show: true,
-                    message: 'Vui lòng chọn ít nhất một năm.'
-                }
-            });
+            this.toggleMessageBox(true, 'Vui lòng chọn ít nhất một năm.');
             return;
         }
 
@@ -173,18 +164,13 @@ class Predict extends React.Component {
     }
 
     handleMessageBoxClose() {
-        this.setState({
-            errorMessageBox: {
-                show: false,
-                message: ''
-            }
-        });
+        this.toggleMessageBox(false, '');
     }
 
     componentDidMount() {
         api.getAllColleges()
             .then(response => {
-                const fetchedColleges = response.body.slice(0, 10);
+                const fetchedColleges = response.body.slice(0, MAX_FETCH_ITEMS);
                 this.setState({ fetchedColleges });
             })
             .catch(error => console.log(error));
