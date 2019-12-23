@@ -16,7 +16,8 @@ const paths = {
             byName: '/Major/find/',
             byGroupCode: '/Major/groupCode/'
         },
-        years: '/MajorCollege/years'
+        years: '/MajorCollege/years',
+        groupCodes: '/MajorCollege/groupcode/'
     },
     post: {
         college: {
@@ -37,6 +38,10 @@ function getApiPath(path, param) {
         apiPath += param;
     }
     return apiPath;
+}
+
+function getApiPathWithoutParams(path) {
+    return localHost + basePath + path;
 }
 
 function getConfig(httpMethod, data) {
@@ -125,6 +130,12 @@ export default {
 
     getYears: async function () {
         const path = getApiPath(paths.get.years);
+        const data = await fetchData(path);
+        return data;
+    },
+
+    getGroupCodesByCollegeAndMajors: async function (collegeCode, majorCode) {
+        const path = getApiPathWithoutParams(paths.get.groupCodes) + collegeCode + '/' + majorCode;
         const data = await fetchData(path);
         return data;
     },

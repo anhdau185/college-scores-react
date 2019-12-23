@@ -11,6 +11,7 @@ class Predict extends React.Component {
         this.controlProps = {
             selectCollege: 'selectCollegePredict',
             selectMajor: 'selectMajorPredict',
+            selectGroupCode: 'selectGroupCodePredict',
             selectYear: 'selectYearPredict'
         };
         this.nameSeparator = ' - ';
@@ -20,6 +21,7 @@ class Predict extends React.Component {
         this.handleCollegeInputChange = this.handleCollegeInputChange.bind(this);
         this.handleSelectCollege = this.handleSelectCollege.bind(this);
         this.handleSelectMajor = this.handleSelectMajor.bind(this);
+        this.handleSelectGroupCode = this.handleSelectGroupCode.bind(this);
         this.handleSelectYear = this.handleSelectYear.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleMessageBoxClose = this.handleMessageBoxClose.bind(this);
@@ -28,13 +30,16 @@ class Predict extends React.Component {
         this.state = {
             selectDisabled: {
                 college: false,
-                major: true
+                major: true,
+                groupCode: true
             },
             fetchedColleges: [],
             fetchedMajors: [],
+            fetchedGroupCodes: [],
             fetchedYears: FUTURE_YEARS,
             selectedCollege: null,
             selectedMajor: null,
+            selectedGroupCode: null,
             selectedYears: [],
             prediction: [],
             errorMessageBox: {
@@ -42,11 +47,6 @@ class Predict extends React.Component {
                 message: ''
             }
         };
-    }
-
-    processData(raw) {
-        console.log(raw.body);
-        return raw.body;
     }
 
     toggleMessageBox(show, message) {
@@ -92,7 +92,8 @@ class Predict extends React.Component {
                     this.setState({
                         selectDisabled: {
                             college: false,
-                            major: false
+                            major: false,
+                            groupCode: true
                         },
                         selectedCollege,
                         fetchedMajors
@@ -103,28 +104,59 @@ class Predict extends React.Component {
             this.setState({
                 selectDisabled: {
                     college: false,
-                    major: true
+                    major: true,
+                    groupCode: true
                 },
                 selectedCollege: null,
                 fetchedMajors: [],
-                selectedMajor: null
+                selectedMajor: null,
+                fetchedGroupCodes: [],
+                selectedGroupCode: null
             });
         }
     }
 
     handleSelectMajor(majorArray) {
-        let selectedMajor;
-
         if (majorArray.length) {
             const selectedString = majorArray[0];
             const separatorPosition = selectedString.indexOf(this.nameSeparator);
             const majorCode = selectedString.substring(0, separatorPosition);
-            selectedMajor = this.state.fetchedMajors.find(item => item.code === majorCode);
-        } else {
-            selectedMajor = null;
-        }
+            const selectedMajor = this.state.fetchedMajors.find(item => item.code === majorCode);
 
-        this.setState({ selectedMajor });
+            //fetch group codes by selected college and major
+            api.getGroupCodesByCollegeAndMajors(this.state.selectedCollege.code, selectedMajor.code)
+                .then(response => this.setState({
+                    selectDisabled: {
+                        college: false,
+                        major: false,
+                        groupCode: false
+                    },
+                    selectedMajor,
+                    fetchedGroupCodes: response.body,
+                }))
+                .catch(error => console.log(error));
+        } else {
+            this.setState({
+                selectDisabled: {
+                    college: false,
+                    major: false,
+                    groupCode: true
+                },
+                selectedMajor: null,
+                fetchedGroupCodes: [],
+                selectedGroupCode: null
+            });
+        }
+    }
+
+    handleSelectGroupCode(groupCodeArray) {
+        let selectedGroupCode;
+        if (groupCodeArray.length) {
+            selectedGroupCode = groupCodeArray[0];
+        } else {
+            selectedGroupCode = null;
+        }
+        this.setState({ selectedGroupCode });
     }
 
     handleSelectYear(selectedYears) {
@@ -132,7 +164,7 @@ class Predict extends React.Component {
     }
 
     handleSubmit() {
-        const { selectedCollege, selectedMajor, selectedYears } = this.state;
+        const { selectedCollege, selectedMajor, selectedGroupCode, selectedYears } = this.state;
 
         if (!selectedCollege) {
             this.toggleMessageBox(true, 'Vui lòng chọn một trường.');
@@ -144,6 +176,11 @@ class Predict extends React.Component {
             return;
         }
 
+        if (!selectedGroupCode) {
+            this.toggleMessageBox(true, 'Vui lòng chọn một tổ hợp môn.');
+            return;
+        }
+
         if (!selectedYears.length) {
             this.toggleMessageBox(true, 'Vui lòng chọn ít nhất một năm.');
             return;
@@ -152,14 +189,12 @@ class Predict extends React.Component {
         const guessDTO = {
             collegeCode: selectedCollege.code,
             majorCode: selectedMajor.code,
+            groupCode: selectedGroupCode,
             years: selectedYears
         };
 
         api.predictMajorScore(guessDTO)
-            .then(response => {
-                const prediction = this.processData(response);
-                this.setState({ prediction });
-            })
+            .then(response => this.setState({ prediction: response.body }))
             .catch(error => console.log(error));
     }
 
@@ -215,6 +250,20 @@ class Predict extends React.Component {
                                                 disabled={this.state.selectDisabled.major}
                                                 handleSelect={this.handleSelectMajor}
                                                 placeholder="Chọn một ngành..."
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="form-row p-2">
+                                        <div className="form-group col-4 d-flex align-items-center my-0">
+                                            Chọn tổ hợp môn:
+                                        </div>
+                                        <div className="form-group col-8 d-flex align-items-center my-0">
+                                            <CustomTypeahead
+                                                id={this.controlProps.selectGroupCode}
+                                                options={this.state.fetchedGroupCodes}
+                                                disabled={this.state.selectDisabled.groupCode}
+                                                handleSelect={this.handleSelectGroupCode}
+                                                placeholder="Chọn một tổ hợp môn..."
                                             />
                                         </div>
                                     </div>
