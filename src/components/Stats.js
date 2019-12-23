@@ -5,6 +5,7 @@ import Select from './Select';
 import MessageBox from './MessageBox';
 import api from '../api';
 import { currentYear } from '../values';
+import { isArrayTruthy } from '../helpers';
 
 export class MajorScoreOverYears extends React.Component {
     constructor(props) {
@@ -424,11 +425,12 @@ export class CompareScoreBetweenColleges extends React.Component {
         let selectedColleges;
 
         if (collegeArray.length) {
-            selectedColleges = collegeArray.map(selectedString => {
+            const mappedArray = collegeArray.map(selectedString => {
                 const separatorPosition = selectedString.indexOf(this.nameSeparator);
                 const collegeCode = selectedString.substring(0, separatorPosition);
                 return this.state.fetchedColleges.find(item => item.code === collegeCode);
             });
+            selectedColleges = isArrayTruthy(mappedArray) ? mappedArray : [];
         } else {
             selectedColleges = [];
         }
@@ -457,7 +459,7 @@ export class CompareScoreBetweenColleges extends React.Component {
             this.setState({
                 errorMessageBox: {
                     show: true,
-                    message: 'Vui lòng chọn ít nhất hai trường có đào tạo ngành đã chọn.'
+                    message: 'Vui lòng chọn ít nhất hai trường có đào tạo ngành đã chọn và loại bỏ những trường không đào tạo ngành này (nếu có).'
                 }
             });
             return;
