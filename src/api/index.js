@@ -40,10 +40,6 @@ function getApiPath(path, param) {
     return apiPath;
 }
 
-function getApiPathWithoutParams(path) {
-    return localHost + basePath + path;
-}
-
 function getConfig(httpMethod, data) {
     let configObject = {
         method: httpMethod,
@@ -135,7 +131,7 @@ export default {
     },
 
     getGroupCodesByCollegeAndMajors: async function (collegeCode, majorCode) {
-        const path = getApiPathWithoutParams(paths.get.groupCodes) + collegeCode + '/' + majorCode;
+        const path = getApiPath(paths.get.groupCodes, collegeCode) + '/' + majorCode;
         const data = await fetchData(path);
         return data;
     },
