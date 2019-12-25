@@ -1,5 +1,6 @@
 import React from 'react';
 import CustomTypeahead from './CustomTypeahead';
+import PredictPanel from './PredictPanel';
 import MessageBox from './MessageBox';
 import api from '../api';
 import { CURRENT_YEAR, FUTURE_YEARS, MAX_FETCH_ITEMS } from '../values';
@@ -41,7 +42,7 @@ class Predict extends React.Component {
             selectedMajor: null,
             selectedGroupCode: null,
             selectedYears: [],
-            prediction: [],
+            prediction: null,
             errorMessageBox: {
                 show: false,
                 message: ''
@@ -293,6 +294,11 @@ class Predict extends React.Component {
                                     </div>
                                 </form>
                             </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-12 p-4">
+                            <PredictPanel prediction={this.state.prediction} />
                         </div>
                     </div>
                 </div>
