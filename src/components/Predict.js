@@ -125,7 +125,7 @@ class Predict extends React.Component {
             const selectedMajor = this.state.fetchedMajors.find(item => item.code === majorCode);
 
             //fetch group codes by selected college and major
-            api.getGroupCodesByCollegeAndMajors(this.state.selectedCollege.code, selectedMajor.code)
+            api.getGroupCodesByCollegeAndMajor(this.state.selectedCollege.code, selectedMajor.code)
                 .then(response => this.setState({
                     selectDisabled: {
                         college: false,

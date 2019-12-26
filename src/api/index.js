@@ -17,7 +17,15 @@ const paths = {
             byGroupCode: '/Major/groupCode/'
         },
         years: '/MajorCollege/years',
-        groupCodes: '/MajorCollege/groupcode/'
+        groupCodes: {
+            all: '/MajorCollege/groupcode',
+            byCollegeMajor: '/MajorCollege/groupcode/'
+        },
+        provinces: {
+            all: '/Province',
+            byId: '/Province/',
+            find: '/Province/find/'
+        }
     },
     post: {
         college: {
@@ -130,8 +138,14 @@ export default {
         return data;
     },
 
-    getGroupCodesByCollegeAndMajors: async function (collegeCode, majorCode) {
-        const path = getApiPath(paths.get.groupCodes, collegeCode) + '/' + majorCode;
+    getAllGroupCodes: async function () {
+        const path = getApiPath(paths.get.groupCodes.all);
+        const data = await fetchData(path);
+        return data;
+    },
+
+    getGroupCodesByCollegeAndMajor: async function (collegeCode, majorCode) {
+        const path = getApiPath(paths.get.groupCodes.byCollegeMajor, collegeCode) + '/' + majorCode;
         const data = await fetchData(path);
         return data;
     },
@@ -173,6 +187,24 @@ export default {
         const config = getConfig('POST', majorCollegeDTO);
 
         const data = await fetchData(path, config);
+        return data;
+    },
+
+    getAllProvinces: async function () {
+        const path = getApiPath(paths.get.provinces.all);
+        const data = await fetchData(path);
+        return data;
+    },
+
+    getProvinceById: async function (id) {
+        const path = getApiPath(paths.get.provinces.byId, id);
+        const data = await fetchData(path);
+        return data;
+    },
+
+    findProvince: async function (name) {
+        const path = getApiPath(paths.get.provinces.find, name);
+        const data = await fetchData(path);
         return data;
     }
 };

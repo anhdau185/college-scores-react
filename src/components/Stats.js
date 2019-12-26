@@ -488,7 +488,7 @@ export class CompareScoreBetweenColleges extends React.Component {
 
         api.getYears()
             .then(response => {
-                let fetchedYears = response.body;
+                const fetchedYears = response.body;
                 this.setState({ fetchedYears, selectedYear: fetchedYears[0] });
             })
             .catch(error => console.log(error));

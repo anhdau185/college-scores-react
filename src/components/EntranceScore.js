@@ -16,7 +16,9 @@ class EntranceScore extends React.Component {
             radioMajor: 'radioMajor',
             selectCollege: 'selectCollege',
             selectMajor: 'selectMajor',
-            selectYear: 'selectYear'
+            selectYear: 'selectYear',
+            selectProvince: 'selectProvince',
+            selectGroupCode: 'selectGroupCode'
         };
         this.nameSeparator = ' - ';
         this.inputChangeTimer = 0;
@@ -31,6 +33,8 @@ class EntranceScore extends React.Component {
         this.handleMajorInputChange = this.handleMajorInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleMessageBoxClose = this.handleMessageBoxClose.bind(this);
+        this.handleSelectProvince = this.handleSelectProvince.bind(this);
+        this.handleSelectGroupCode = this.handleSelectGroupCode.bind(this);
 
         // Initial state for the component
         this.state = {
@@ -45,9 +49,13 @@ class EntranceScore extends React.Component {
             fetchedColleges: [],
             fetchedMajors: [],
             fetchedYears: [],
+            fetchedProvinces: [],
+            fetchedGroupCodes: [],
             selectedCollege: null,
             selectedMajor: null,
             selectedYears: [],
+            selectedProvince: null,
+            selectedGroupCode: null,
             scores: null,
             errorMessageBox: {
                 show: false,
@@ -122,38 +130,77 @@ class EntranceScore extends React.Component {
         this.setState({ selectedYears: selectedYears.map(item => parseInt(item)) });
     }
 
+    handleSelectProvince(provinceArray) {
+        if (provinceArray.length) {
+            const selectedString = provinceArray[0];
+            const separatorPosition = selectedString.indexOf(this.nameSeparator);
+            const provinceId = parseInt(selectedString.substring(0, separatorPosition));
+            const selectedProvince = this.state.fetchedProvinces.find(item => item.province_id === provinceId);
+
+            api.getCollegesByProvince(provinceId)
+                .then(response => {
+                    this.setState({
+                        selectedProvince,
+                        fetchedColleges: response.body
+                    });
+                })
+                .catch(error => console.log(error));
+        } else {
+            this.setState({
+                selectedProvince: null,
+                fetchedColleges: []
+            });
+        }
+    }
+
+    handleSelectGroupCode(groupCodeArray) {
+        if (groupCodeArray.length) {
+            const selectedGroupCode = groupCodeArray[0];
+
+            api.getMajorsByGroupCode(selectedGroupCode)
+                .then(response => {
+                    this.setState({
+                        selectedGroupCode,
+                        fetchedMajors: response.body
+                    });
+                })
+                .catch(error => console.log(error));
+        } else {
+            this.setState({
+                selectedGroupCode: null,
+                fetchedMajors: []
+            });
+        }
+    }
+
     handleCollegeInputChange(input) {
-        clearTimeout(this.inputChangeTimer);
-        this.inputChangeTimer = setTimeout(
-            () => {
-                if (input.length >= 3) {
-                    api.findCollegesByName(input)
-                        .then(response => {
-                            const fetchedColleges = response.body.slice(0, MAX_FETCH_ITEMS);
-                            this.setState({ fetchedColleges });
-                        })
-                        .catch(error => console.log(error));
-                }
-            },
-            this.inputChangeTimeout
-        );
+        if (input.length >= 3 && !this.state.selectedProvince) {
+            clearTimeout(this.inputChangeTimer);
+            this.inputChangeTimer = setTimeout(
+                () => api.findCollegesByName(input)
+                    .then(response => {
+                        const fetchedColleges = response.body.slice(0, MAX_FETCH_ITEMS);
+                        this.setState({ fetchedColleges });
+                    })
+                    .catch(error => console.log(error)),
+                this.inputChangeTimeout
+            );
+        }
     }
 
     handleMajorInputChange(input) {
-        clearTimeout(this.inputChangeTimer);
-        this.inputChangeTimer = setTimeout(
-            () => {
-                if (input.length >= 3) {
-                    api.findMajorsByName(input)
-                        .then(response => {
-                            const fetchedMajors = response.body.slice(0, MAX_FETCH_ITEMS);
-                            this.setState({ fetchedMajors });
-                        })
-                        .catch(error => console.log(error));
-                }
-            },
-            this.inputChangeTimeout
-        );
+        if (input.length >= 3 && !this.state.selectedGroupCode) {
+            clearTimeout(this.inputChangeTimer);
+            this.inputChangeTimer = setTimeout(
+                () => api.findMajorsByName(input)
+                    .then(response => {
+                        const fetchedMajors = response.body.slice(0, MAX_FETCH_ITEMS);
+                        this.setState({ fetchedMajors });
+                    })
+                    .catch(error => console.log(error)),
+                this.inputChangeTimeout
+            );
+        }
     }
 
     handleSubmit() {
@@ -217,8 +264,22 @@ class EntranceScore extends React.Component {
 
         api.getYears()
             .then(response => {
-                let fetchedYears = response.body;
+                const fetchedYears = response.body;
                 this.setState({ fetchedYears });
+            })
+            .catch(error => console.log(error));
+
+        api.getAllProvinces()
+            .then(response => {
+                const fetchedProvinces = response.body;
+                this.setState({ fetchedProvinces });
+            })
+            .catch(error => console.log(error));
+
+        api.getAllGroupCodes()
+            .then(response => {
+                const fetchedGroupCodes = response.body;
+                this.setState({ fetchedGroupCodes });
             })
             .catch(error => console.log(error));
     }
@@ -258,6 +319,19 @@ class EntranceScore extends React.Component {
                                         </div>
                                     </div>
                                     <div className="form-row p-2">
+                                        <div className="form-group col-4 d-flex align-items-center my-0"></div>
+                                        <div className="form-group col-8 d-flex align-items-center my-0">
+                                            <div className="pr-3">Tìm trường theo tỉnh thành:</div>
+                                            <CustomTypeahead
+                                                id={this.controlProps.selectProvince}
+                                                options={this.state.fetchedProvinces.map(({ province_id: id, name }) => id + this.nameSeparator + name)}
+                                                disabled={this.state.selectDisabled.college}
+                                                handleSelect={this.handleSelectProvince}
+                                                placeholder="Chọn một tỉnh..."
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="form-row p-2">
                                         <div className="form-group col-4 d-flex align-items-center my-0">
                                             <Radio
                                                 label="Theo ngành/nhóm ngành:"
@@ -275,6 +349,19 @@ class EntranceScore extends React.Component {
                                                 handleSelect={this.handleSelectMajor}
                                                 handleInputChange={this.handleMajorInputChange}
                                                 placeholder="Chọn một ngành..."
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="form-row p-2">
+                                        <div className="form-group col-4 d-flex align-items-center my-0"></div>
+                                        <div className="form-group col-8 d-flex align-items-center my-0">
+                                            <div className="pr-3">Tìm ngành theo tổ hợp môn:</div>
+                                            <CustomTypeahead
+                                                id={this.controlProps.selectGroupCode}
+                                                options={this.state.fetchedGroupCodes}
+                                                disabled={this.state.selectDisabled.major}
+                                                handleSelect={this.handleSelectGroupCode}
+                                                placeholder="Chọn một tổ hợp môn..."
                                             />
                                         </div>
                                     </div>
