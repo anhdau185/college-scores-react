@@ -17,7 +17,10 @@ const paths = {
             byGroupCode: '/Major/groupCode/'
         },
         years: '/MajorCollege/years',
-        groupCodes: '/MajorCollege/groupcode/',
+        groupCodes: {
+            all: '/MajorCollege/groupcode',
+            byCollegeMajor: '/MajorCollege/groupcode/'
+        },
         provinces: {
             all: '/Province',
             byId: '/Province/',
@@ -135,8 +138,14 @@ export default {
         return data;
     },
 
-    getGroupCodesByCollegeAndMajors: async function (collegeCode, majorCode) {
-        const path = getApiPath(paths.get.groupCodes, collegeCode) + '/' + majorCode;
+    getAllGroupCodes: async function () {
+        const path = getApiPath(paths.get.groupCodes.all);
+        const data = await fetchData(path);
+        return data;
+    },
+
+    getGroupCodesByCollegeAndMajor: async function (collegeCode, majorCode) {
+        const path = getApiPath(paths.get.groupCodes.byCollegeMajor, collegeCode) + '/' + majorCode;
         const data = await fetchData(path);
         return data;
     },

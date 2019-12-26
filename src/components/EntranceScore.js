@@ -144,6 +144,7 @@ class EntranceScore extends React.Component {
                         fetchedColleges: response.body
                     });
                 })
+                .catch(error => console.log(error));
         } else {
             this.setState({
                 selectedProvince: null,
@@ -152,7 +153,25 @@ class EntranceScore extends React.Component {
         }
     }
 
-    handleSelectGroupCode(groupCodeArray) { }
+    handleSelectGroupCode(groupCodeArray) {
+        if (groupCodeArray.length) {
+            const selectedGroupCode = groupCodeArray[0];
+
+            api.getMajorsByGroupCode(selectedGroupCode)
+                .then(response => {
+                    this.setState({
+                        selectedGroupCode,
+                        fetchedMajors: response.body
+                    });
+                })
+                .catch(error => console.log(error));
+        } else {
+            this.setState({
+                selectedGroupCode: null,
+                fetchedMajors: []
+            });
+        }
+    }
 
     handleCollegeInputChange(input) {
         if (input.length >= 3 && !this.state.selectedProvince) {
@@ -245,19 +264,24 @@ class EntranceScore extends React.Component {
 
         api.getYears()
             .then(response => {
-                let fetchedYears = response.body;
+                const fetchedYears = response.body;
                 this.setState({ fetchedYears });
             })
             .catch(error => console.log(error));
 
         api.getAllProvinces()
             .then(response => {
-                let fetchedProvinces = response.body;
+                const fetchedProvinces = response.body;
                 this.setState({ fetchedProvinces });
             })
             .catch(error => console.log(error));
 
-        // get all groupCodes here
+        api.getAllGroupCodes()
+            .then(response => {
+                const fetchedGroupCodes = response.body;
+                this.setState({ fetchedGroupCodes });
+            })
+            .catch(error => console.log(error));
     }
 
     render() {
@@ -334,7 +358,7 @@ class EntranceScore extends React.Component {
                                             <div className="pr-3">Tìm ngành theo tổ hợp môn:</div>
                                             <CustomTypeahead
                                                 id={this.controlProps.selectGroupCode}
-                                                options={this.state.fetchedGroupCodes.map(({ code, name }) => code + this.nameSeparator + name)}
+                                                options={this.state.fetchedGroupCodes}
                                                 disabled={this.state.selectDisabled.major}
                                                 handleSelect={this.handleSelectGroupCode}
                                                 placeholder="Chọn một tổ hợp môn..."
