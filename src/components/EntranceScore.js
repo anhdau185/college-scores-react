@@ -141,7 +141,8 @@ class EntranceScore extends React.Component {
                 .then(response => {
                     this.setState({
                         selectedProvince,
-                        fetchedColleges: response.body
+                        fetchedColleges: response.body,
+                        selectedCollege: null
                     });
                 })
                 .catch(error => console.log(error));
@@ -161,7 +162,8 @@ class EntranceScore extends React.Component {
                 .then(response => {
                     this.setState({
                         selectedGroupCode,
-                        fetchedMajors: response.body
+                        fetchedMajors: response.body,
+                        selectedMajor: null
                     });
                 })
                 .catch(error => console.log(error));
