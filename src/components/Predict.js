@@ -3,7 +3,8 @@ import CustomTypeahead from './CustomTypeahead';
 import PredictPanel from './PredictPanel';
 import MessageBox from './MessageBox';
 import api from '../api';
-import { CURRENT_YEAR, FUTURE_YEARS, MAX_FETCH_ITEMS } from '../values';
+import { CURRENT_YEAR, FUTURE_YEARS, FURTHEST_RECENT_YEAR, MAX_FETCH_ITEMS } from '../values';
+import { isArrayTruthy } from '../helpers';
 
 class Predict extends React.Component {
     constructor(props) {
@@ -42,12 +43,23 @@ class Predict extends React.Component {
             selectedMajor: null,
             selectedGroupCode: null,
             selectedYears: [],
+            recentScores: null,
             prediction: null,
+            chartData: {
+                collegeName: '',
+                majorName: '',
+                groupCode: '',
+                data: null
+            },
             errorMessageBox: {
                 show: false,
                 message: ''
             }
         };
+    }
+
+    processRecentData() {
+        return null;
     }
 
     toggleMessageBox(show, message) {
@@ -194,8 +206,31 @@ class Predict extends React.Component {
             years: selectedYears
         };
 
+        const majorCollegeDTO = {
+            collegeId: selectedCollege.code,
+            majorId: selectedMajor.code
+        };
+
         api.predictMajorScore(guessDTO)
-            .then(response => this.setState({ prediction: response.body }))
+            .then(response => {
+                this.setState(
+                    { prediction: response.body },
+                    () => {
+                        api.getMajorScoreOverYears(majorCollegeDTO)
+                            .then(response => {
+                                this.setState(
+                                    { recentScores: response.body },
+                                    () => {
+                                        const processed = this.processData(this.state.prediction, this.state.recentScores);
+                                        console.log(processed);
+                                        this.setState({ chartData: processed });
+                                    }
+                                );
+                            })
+                            .catch(error => console.log(error));
+                    }
+                );
+            })
             .catch(error => console.log(error));
     }
 
@@ -210,6 +245,37 @@ class Predict extends React.Component {
                 this.setState({ fetchedColleges });
             })
             .catch(error => console.log(error));
+    }
+
+    processData(prediction, recentScores) {
+        if (!prediction || typeof prediction === 'string' || !recentScores)
+            return null;
+
+        const combined = recentScores.scores
+            .filter(item => item.year >= FURTHEST_RECENT_YEAR)
+            .concat(prediction.jsonScores);
+
+        if (!isArrayTruthy(combined))
+            return null;
+
+        return {
+            collegeName: prediction.collegeName,
+            majorName: prediction.majorName,
+            groupCode: prediction.groupCode,
+            data: {
+                labels: combined.map(item => item.year),
+                datasets: [
+                    {
+                        label: 'Điểm chuẩn',
+                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                        borderColor: 'rgba(0, 0, 0, 1)',
+                        borderWidth: 1,
+                        data: combined.map(item => item.score),
+                        lineTension: 0.1
+                    }
+                ]
+            }
+        };
     }
 
     render() {
@@ -298,7 +364,11 @@ class Predict extends React.Component {
                     </div>
                     <div className="row">
                         <div className="col-12 p-4">
-                            <PredictPanel prediction={this.state.prediction} />
+                            <PredictPanel
+                                prediction={this.state.prediction}
+                                recentScores={this.state.recentScores}
+                                chartData={this.state.chartData}
+                            />
                         </div>
                     </div>
                 </div>
